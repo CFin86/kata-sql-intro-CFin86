@@ -46,7 +46,7 @@ namespace SqlIntro
             using (var conn = new MySqlConnection(_connectionString))
             {
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = ""; //Write a delete statement that deletes by id
+                cmd.CommandText = "DELETE FROM Product WHERE name = id"; //Write a delete statement that deletes by id
                 cmd.ExecuteNonQuery();
             }
         }
