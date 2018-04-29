@@ -6,8 +6,7 @@ namespace SqlIntro
     {
         static void Main(string[] args)
         {
-            //TODO Create a new user and grant him access to this database 
-            var connectionString = "Server=localhost;Database=AdventureWorks;Uid=root;Pwd=kuwabara12;";
+            var connectionString = "Server=localhost;Database=AdventureWorks;Uid=finney;Pwd=password;";
             var repo = new ProductRepository(connectionString);
 
             foreach (var prod in repo.GetProducts())
