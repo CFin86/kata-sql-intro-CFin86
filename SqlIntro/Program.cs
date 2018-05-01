@@ -17,11 +17,11 @@ namespace SqlIntro
             {
                 Console.WriteLine("Product Name:" + prod.Name);
             }
-            var id = 1001;
-            var name = "The Archive";
+            int id = 1003;
+            var name = "True Coders House of Happpiness";
             var newEntry = new Product { Id = id, Name = name };
-            //repo.InsertProduct(newEntry);
-            repo.DeleteProduct(1002);
+            repo.UpdateProduct(newEntry);
+            //repo.DeleteProduct(1002);
             Console.ReadLine();
         }
        

@@ -15,14 +15,14 @@ namespace SqlIntro
             _connectionString = connectionString;
         }
 
-     
+
         public IEnumerable<Product> GetProducts()
         {
             using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
                 return conn.Query<Product>("SELECT ProductId as Id, Name FROM product;");
-               }
+            }
         }
         public void DeleteProduct(int id)
         {
@@ -30,14 +30,14 @@ namespace SqlIntro
             using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
-                conn.Execute(sql, new {id});
+                conn.Execute(sql, new { id });
             }
         }
 
         public void InsertProduct(Product prod)
         {
             var sql = "INSERT into product(name) values(@name)";
-            using ( var conn = new MySqlConnection(_connectionString))
+            using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
                 conn.Execute(sql, new { name = prod.Name });
@@ -45,11 +45,12 @@ namespace SqlIntro
         }
 
         public void UpdateProduct(Product prod)
-        { var sql = "update product set name = @name where id = @id";
+        {
+            var sql = "UPDATE product SET name = @name WHERE ProductID = @id";
             using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
-                var count = conn.Execute(sql, prod);
+                var count = conn.Execute(sql, new { id = prod.Id, name = prod.Name });
             }
         }
     }
