@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
 namespace SqlIntro
 {
-    public class ProductRepository
+    public class ProductRepository : IProductRepository
     {
         private readonly string _connectionString;
 
@@ -26,8 +20,9 @@ namespace SqlIntro
         {
             using (var conn = new MySqlConnection(_connectionString))
             {
+                conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = ""; //TODO:  Write a SELECT statement that gets all products
+                cmd.CommandText = "SELECT * FROM product;";
                 var dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {
@@ -44,28 +39,31 @@ namespace SqlIntro
         {
             using (var conn = new MySqlConnection(_connectionString))
             {
+                conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = ""; //Write a delete statement that deletes by id
+                cmd.CommandText = "DELETE FROM product WHERE ProductID = @id";
+                cmd.Parameters.AddWithValue("@id", id);
                 cmd.ExecuteNonQuery();
             }
         }
+
         /// <summary>
         /// Updates the Product in the database
         /// </summary>
         /// <param name="prod"></param>
         public void UpdateProduct(Product prod)
         {
-            //This is annoying and unnecessarily tedious for large objects.
-            //More on this in the future...  Nothing to do here..
             using (var conn = new MySqlConnection(_connectionString))
             {
+                conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = "update product set name = @name where id = @id";
+                cmd.CommandText = "update product set name = @name where ProductID = @id";
                 cmd.Parameters.AddWithValue("@name", prod.Name);
                 cmd.Parameters.AddWithValue("@id", prod.Id);
                 cmd.ExecuteNonQuery();
             }
         }
+
         /// <summary>
         /// Inserts a new Product into the database
         /// </summary>
@@ -74,10 +72,52 @@ namespace SqlIntro
         {
             using (var conn = new MySqlConnection(_connectionString))
             {
+                conn.Open();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = "INSERT into product (name) values(@name)";
                 cmd.Parameters.AddWithValue("@name", prod.Name);
                 cmd.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Performs an INNER JOIN from the product table and productreview table, 
+        /// returns the name of all products with a review 
+        /// </summary>
+        ///<returns></returns>
+        public IEnumerable<Product> GetProductsWithReview()
+        {
+            using (var conn = new MySqlConnection(_connectionString))
+            {
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT p.name FROM product as p INNER JOIN productreview as pr on p.ProductID = pr.ProductID;";
+                var dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    yield return new Product { Name = dr["Name"].ToString() };
+                }
+            }
+        }
+
+        /// <summary>
+        /// Performs a LEFT JOIN from the product table and productreview table,
+        /// returns the name of products with a review 
+        /// and the corresponding review 
+        /// </summary>
+        ///<returns></returns>
+        public IEnumerable<Product> GetProductsAndReview()
+        {
+            using (var conn = new MySqlConnection(_connectionString))
+            {
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT p.name, pr.Comments FROM product as p LEFT JOIN productreview as pr ON p.ProductID = pr.ProductID WHERE comments IS NOT NULL;";
+                var dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    yield return new Product { Name = dr["Name"].ToString(), Comments = dr["Comments"].ToString() };
+                }
             }
         }
     }
