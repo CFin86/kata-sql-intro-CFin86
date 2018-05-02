@@ -288,6 +288,5 @@ __pycache__/
 *.xsd.cs
 
 #Environment Variables
-appsettings.json
 *.Release.json
 *.Debug.json
