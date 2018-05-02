@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 
 namespace SqlIntro
 {
@@ -6,12 +8,22 @@ namespace SqlIntro
     {
         static void Main(string[] args)
         {
-            var connectionString = "Server=localhost;Database=AdventureWorks;Uid=finney;Pwd=password;";
-            // This statement on line 11 allows you to use the Nuget package Dapper
-            //var repo = new DapperProductRepo(connectionString);
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+#if DEBUG
+                .AddJsonFile("appsettings.Debug.json")
+#else
+    .AddJsonFile("appsettings.Release.json", optional: true)
+#endif
+            .Build();
 
-            //This statement on line 14 allows you to use parameterized ANSI SQL statements
-            var repo = new ProductRepository(connectionString);
+            var connectionString = config.GetConnectionString("DefaultConnection");
+            // This statement on line 23 allows you to use the Nuget package Dapper
+            var repo = new DapperProductRepo(connectionString);
+
+            //This statement on line 26 allows you to use parameterized ANSI SQL statements
+            //var repo = new ProductRepository(connectionString);
             foreach (var prod in repo.GetProducts())
             {
                 Console.Write("Product Name: ");
@@ -20,7 +32,7 @@ namespace SqlIntro
                 Console.ResetColor();
             }
 
-            // this block(line 22, 30) is in place to test the InsertProduct, UpdateProduct && DeleteProduct methods
+            // this block(line 35, 41) is in place to test the InsertProduct, UpdateProduct && DeleteProduct methods
             /* int id = 1004;
             var name = "True Coders Student Terrorizer";
             var newEntry = new Product { Id = id, Name = name };

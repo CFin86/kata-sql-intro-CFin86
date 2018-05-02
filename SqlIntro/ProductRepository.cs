@@ -20,9 +20,9 @@ namespace SqlIntro
         {
             using (var conn = new MySqlConnection(_connectionString))
             {
+                conn.Open();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = "SELECT * FROM product;";
-                conn.Open();
                 var dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {
@@ -39,9 +39,9 @@ namespace SqlIntro
         {
             using (var conn = new MySqlConnection(_connectionString))
             {
+                conn.Open();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = "DELETE FROM product WHERE ProductID = @id";
-                conn.Open();
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.ExecuteNonQuery();
             }
@@ -55,9 +55,9 @@ namespace SqlIntro
         {
             using (var conn = new MySqlConnection(_connectionString))
             {
+                conn.Open();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = "update product set name = @name where ProductID = @id";
-                conn.Open();
                 cmd.Parameters.AddWithValue("@name", prod.Name);
                 cmd.Parameters.AddWithValue("@id", prod.Id);
                 cmd.ExecuteNonQuery();
@@ -72,9 +72,9 @@ namespace SqlIntro
         {
             using (var conn = new MySqlConnection(_connectionString))
             {
+                conn.Open();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = "INSERT into product (name) values(@name)";
-                conn.Open();
                 cmd.Parameters.AddWithValue("@name", prod.Name);
                 cmd.ExecuteNonQuery();
             }
@@ -89,9 +89,9 @@ namespace SqlIntro
         {
             using (var conn = new MySqlConnection(_connectionString))
             {
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT DISTINCT product.name FROM product INNER JOIN productreview on product.ProductID = productreview.ProductID;";
                 conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT p.name FROM product as p INNER JOIN productreview as pr on p.ProductID = pr.ProductID;";
                 var dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {
@@ -110,9 +110,9 @@ namespace SqlIntro
         {
             using (var conn = new MySqlConnection(_connectionString))
             {
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT product.name, productreview.Comments FROM product LEFT JOIN productreview ON product.ProductID = productreview.ProductID WHERE comments IS NOT NULL;";
                 conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT p.name, pr.Comments FROM product as p LEFT JOIN productreview as pr ON p.ProductID = pr.ProductID WHERE comments IS NOT NULL;";
                 var dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {

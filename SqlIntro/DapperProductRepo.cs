@@ -19,10 +19,10 @@ namespace SqlIntro
         /// <returns></returns>
         public IEnumerable<Product> GetProducts()
         {
-            var sql = "SELECT ProductId as Id, Name FROM product;";
             using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
+                var sql = "SELECT ProductId as Id, Name FROM product;";
                 return conn.Query<Product>(sql);
             }
         }
@@ -32,10 +32,10 @@ namespace SqlIntro
         /// <param name="id"></param>
         public void DeleteProduct(int id)
         {
-            var sql = "DELETE FROM product WHERE ProductID = @id";
             using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
+                var sql = "DELETE FROM product WHERE ProductID = @id";
                 conn.Execute(sql, new { id });
             }
         }
@@ -46,10 +46,10 @@ namespace SqlIntro
         /// <param name="prod"></param>
         public void InsertProduct(Product prod)
         {
-            var sql = "INSERT into product(name) values(@name)";
             using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
+                var sql = "INSERT into product(name) values(@name)";
                 conn.Execute(sql, new { name = prod.Name });
             }
         }
@@ -60,10 +60,10 @@ namespace SqlIntro
         /// <param name="prod"></param>
         public void UpdateProduct(Product prod)
         {
-            var sql = "UPDATE product SET name = @name WHERE ProductID = @id";
             using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
+                var sql = "UPDATE product SET name = @name WHERE ProductID = @id";
                 conn.Execute(sql, new { id = prod.Id, name = prod.Name });
             }
         }
@@ -75,10 +75,10 @@ namespace SqlIntro
         ///<returns></returns>
         public IEnumerable<Product> GetProductsWithReview()
         {
-            var sql = "SELECT product.name FROM product INNER JOIN productreview on product.ProductID = productreview.ProductID;";
             using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
+                var sql = "SELECT p.name FROM product as p INNER JOIN productreview as pr on p.ProductID = pr.ProductID;";
                 return conn.Query<Product>(sql);
             }
         }
@@ -91,10 +91,11 @@ namespace SqlIntro
         ///<returns></returns>
         public IEnumerable<Product> GetProductsAndReview()
         {
-            var sql = "SELECT product.name, productreview.Comments FROM product LEFT JOIN productreview ON product.ProductID = productreview.ProductID WHERE comments IS NOT NULL;";
+            
             using (var conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
+                var sql = "SELECT p.name, pr.Comments FROM product as p LEFT JOIN productreview as pr ON p.ProductID = pr.ProductID WHERE comments IS NOT NULL;";
                 return conn.Query<Product>(sql);
             }
         }
